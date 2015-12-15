@@ -44,12 +44,12 @@ if (process.platform === 'linux') {
 		var proc = spawn('ls', [ '-1' ])
 		disableOomKiller.sync({
 			pid: proc.pid,
-			oom_adj: -15,
-			oom_score_adj: -998
+			oom_adj: 0,
+			oom_score_adj: 0
 		})
 
-		t.equal(fs.readFileSync('/proc/' + proc.pid + '/oom_adj', 'utf8'), '-15\n')
-		t.equal(fs.readFileSync('/proc/' + proc.pid + '/oom_score_adj', 'utf8'), '-998\n')
+		t.equal(fs.readFileSync('/proc/' + proc.pid + '/oom_adj', 'utf8'), '0\n')
+		t.equal(fs.readFileSync('/proc/' + proc.pid + '/oom_score_adj', 'utf8'), '0\n')
 
 		t.end()
 	})
