@@ -1,18 +1,6 @@
 var test = require('tape')
 var fs = require('fs')
 var disableOomKiller = require('./index.js')
-var processPlatform = process.platform
-
-test('non-linux', function (t) {
-	process.platform = 'not linux'
-	t.throws(disableOomKiller.sync, /Unsupported on non-linux systems/)
-	
-	disableOomKiller(function (err) {
-		t.equal(err.message, 'Unsupported on non-linux systems')
-		t.end()
-	})
-	process.platform = processPlatform
-})
 
 if (process.platform === 'linux') {
 	test('async defaults', function (t) {
@@ -42,7 +30,7 @@ if (process.platform === 'linux') {
 	})
 
 	test('sync defaults', function (t) {
-		disableOomKiller.sync()
+		t.doesNotThrow(disableOomKiller.sync)
 
 		t.equal(fs.readFileSync('/proc/' + process.pid + '/oom_adj', 'utf8'), '-17')
 		t.equal(fs.readFileSync('/proc/' + process.pid + '/oom_score_adj', 'utf8'), '-1000')
@@ -63,5 +51,13 @@ if (process.platform === 'linux') {
 		t.end()
 	})
 } else {
-	console.error('Unable to fully test on non-linux systems.')
+	test('non-linux', function (t) {
+		console.log(process.platform)
+		t.throws(disableOomKiller.sync, /Unsupported on non-linux systems/)
+		
+		disableOomKiller(function (err) {
+			t.equal(err.message, 'Unsupported on non-linux systems')
+			t.end()
+		})
+	})
 }
