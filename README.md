@@ -35,14 +35,14 @@ var disableOomKiller = require('disable-oom-killer')
 - `opts` is an optional object:
 	- `pid` is a string/number of the pid to kill. Defaults to `process.pid`. If the PID is not running, it will likely cause an error.
 	- `oom_adj` is a string/number of the [oom_adj][oom]. Defaults to `-17`
-	- `oom_score_adj` is a string/number of the [oom_score_adj[oom]. Defaults to `-1000`
+	- `oom_score_adj` is a string/number of the [oom_score_adj][oom]. Defaults to `-1000`
 - `cb(err)` is an optional callback function. Will call back with an error if on a non-linux system. If no callback is supplied, errors will be thrown.
 
 ## `disableOomKiller.sync([opts])`
 
 Synchronous version of `disableOomKiller()`. Any errors that occur will be thrown.
 
-- `opts`: Same as above.
+- `opts` - Same as above.
 
 # install
 
