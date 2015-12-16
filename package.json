@@ -1,6 +1,6 @@
 {
   "name": "disable-oom-killer",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Disable the OOM (Out Of Memory) Killer for a process (linux only)",
   "main": "index.js",
   "scripts": {
