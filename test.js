@@ -4,28 +4,25 @@ var spawn = require('child_process').spawn
 var disableOomKiller = require('./index.js')
 
 function expect(t, pid, oom_adj, oom_score_adj) {
-	setTimeout(function () {
-		try {
-			t.equal(fs.readFileSync('/proc/' + pid + '/oom_adj', 'utf8'), oom_adj)
-		} catch (err) {
-			t.ifError(err)
-		}
-		
-		try {
-			t.equal(fs.readFileSync('/proc/' + pid + '/oom_score_adj', 'utf8'), oom_score_adj)
-		} catch (err) {
-			t.ifError(err)
-		}
+	try {
+		t.equal(fs.readFileSync('/proc/' + pid + '/oom_adj', 'utf8'), oom_adj)
+	} catch (err) {
+		t.ifError(err)
+	}
+	
+	try {
+		t.equal(fs.readFileSync('/proc/' + pid + '/oom_score_adj', 'utf8'), oom_score_adj)
+	} catch (err) {
+		t.ifError(err)
+	}
 
-		t.end()
-	}, 100)
+	t.end()
 }
 
 if (process.platform === 'linux') {
 	test('async defaults', function (t) {
 		disableOomKiller(function (err) {
 			t.ifError(err)
-
 			expect(t, process.pid, '-17\n', '-1000\n')
 		})
 	})
@@ -38,14 +35,12 @@ if (process.platform === 'linux') {
 			oom_score_adj: -999
 		}, function (err) {
 			t.ifError(err)
-
-			expect(t, process.pid, '-16\n', '-999\n')
+			expect(t, proc.pid, '-16\n', '-999\n')
 		})
 	})
 
 	test('sync defaults', function (t) {
 		t.doesNotThrow(disableOomKiller.sync)
-
 		expect(t, process.pid, '-17\n', '-1000\n')
 	})
 
@@ -58,8 +53,7 @@ if (process.platform === 'linux') {
 				oom_score_adj: 0
 			})
 		})
-
-		expect(t, process.pid, '0\n', '0\n')
+		expect(t, proc.pid, '0\n', '0\n')
 	})
 	
 	test('child_process object as options', function (t) {

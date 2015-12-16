@@ -3,13 +3,11 @@ var fs = require('fs')
 var xtend  = require('xtend')
 
 function parseOpts(options) {
-	var o = xtend({
+	return xtend({
 		pid: process.pid,
 		oom_score_adj: '-1000',
 		oom_adj: '-17'
 	}, options)
-	console.log(o.oom_adj, o.oom_score_adj)
-	return o
 }
 
 module.exports = function disableOomKiller(options, cb) {
