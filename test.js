@@ -28,7 +28,7 @@ if (process.platform === 'linux') {
 	})
 
 	test('async options', function (t) {
-		var proc = spawn('ls', [ '-R' ])
+		var proc = spawn('sleep', [ '1' ])
 		disableOomKiller({
 			pid: proc.pid,
 			oom_adj: -16,
@@ -45,7 +45,7 @@ if (process.platform === 'linux') {
 	})
 
 	test('sync options', function (t) {
-		var proc = spawn('ls', [ '-1' ])
+		var proc = spawn('sleep', [ '1' ])
 		t.doesNotThrow(function () {
 			disableOomKiller.sync({
 				pid: proc.pid,
@@ -57,7 +57,7 @@ if (process.platform === 'linux') {
 	})
 	
 	test('child_process object as options', function (t) {
-		disableOomKiller(spawn('ls', [ '-SR' ]), function (err) {
+		disableOomKiller(spawn('sleep', [ '1' ]), function (err) {
 			t.ifError(err)
 			t.end()
 		})
