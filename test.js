@@ -64,7 +64,6 @@ if (process.platform === 'linux') {
 	})
 } else {
 	test('non-linux', function (t) {
-		console.log(process.platform)
 		t.throws(disableOomKiller.sync, /Unsupported on non-linux systems/)
 		
 		disableOomKiller(function (err) {
