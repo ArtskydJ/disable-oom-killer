@@ -3,13 +3,28 @@ var fs = require('fs')
 var spawn = require('child_process').spawn
 var disableOomKiller = require('./index.js')
 
+function expect(t, pid, oom_adj, oom_score_adj) {
+	try {
+		var content1 = fs.readFileSync('/proc/' + pid + '/oom_adj', 'utf8')
+		t.equal(content1, oom_adj)
+	} catch (err) {
+		t.ifError(err)
+	}
+	
+	try {
+		var content2 = fs.readFileSync('/proc/' + pid + '/oom_score_adj', 'utf8')
+		t.equal(content2, oom_score_adj)
+	} catch (err) {
+		t.ifError(err)
+	}
+}
+
 if (process.platform === 'linux') {
 	test('async defaults', function (t) {
 		disableOomKiller(function (err) {
 			t.ifError(err)
 
-			t.equal(fs.readFileSync('/proc/' + process.pid + '/oom_adj', 'utf8'), '-17\n')
-			t.equal(fs.readFileSync('/proc/' + process.pid + '/oom_score_adj', 'utf8'), '-1000\n')
+			expect(t, process.pid, '-17\n', '-1000\n')
 
 			t.end()
 		})
@@ -24,8 +39,7 @@ if (process.platform === 'linux') {
 		}, function (err) {
 			t.ifError(err)
 
-			t.equal(fs.readFileSync('/proc/' + proc.pid + '/oom_adj', 'utf8'), '-16\n')
-			t.equal(fs.readFileSync('/proc/' + proc.pid + '/oom_score_adj', 'utf8'), '-999\n')
+			expect(t, process.pid, '-16\n', '-999\n')
 
 			t.end()
 		})
@@ -34,22 +48,22 @@ if (process.platform === 'linux') {
 	test('sync defaults', function (t) {
 		t.doesNotThrow(disableOomKiller.sync)
 
-		t.equal(fs.readFileSync('/proc/' + process.pid + '/oom_adj', 'utf8'), '-17\n')
-		t.equal(fs.readFileSync('/proc/' + process.pid + '/oom_score_adj', 'utf8'), '-1000\n')
+		expect(t, process.pid, '-17\n', '-1000\n')
 
 		t.end()
 	})
 
 	test('sync options', function (t) {
 		var proc = spawn('ls', [ '-1' ])
-		disableOomKiller.sync({
-			pid: proc.pid,
-			oom_adj: 0,
-			oom_score_adj: 0
+		t.doesNotThrow(function () {
+			disableOomKiller.sync({
+				pid: proc.pid,
+				oom_adj: 0,
+				oom_score_adj: 0
+			})
 		})
 
-		t.equal(fs.readFileSync('/proc/' + proc.pid + '/oom_adj', 'utf8'), '0\n')
-		t.equal(fs.readFileSync('/proc/' + proc.pid + '/oom_score_adj', 'utf8'), '0\n')
+		expect(t, process.pid, '0\n', '0\n')
 
 		t.end()
 	})
